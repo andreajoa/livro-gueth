@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Os Dois Iguais e o Segredo do Coração</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #1a5fa8;
+    --red: #c0392b;
+    --warm: #f5e6c8;
+    --cream: #fdf6e3;
+    --dark: #1c1c2e;
+    --gold: #e8a020;
+    --shadow: rgba(0,0,0,0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: linear-gradient(135deg, #0f1b35 0%, #1a2a4a 50%, #0d1a30 100%);
+    min-height: 100vh;
+    font-family: 'Nunito', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Stars background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 50% 10%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 20% 75%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 75% 45%, rgba(255,255,255,0.6) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+    padding: 28px 20px 10px;
+    position: relative;
+    z-index: 10;
+  }
+
+  header h1 {
+    font-family: 'Bubblegum Sans', cursive;
+    font-size: clamp(1.4rem, 4vw, 2.2rem);
+    color: var(--warm);
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+  }
+
+  header h1 span.red { color: #f47c6e; }
+  header h1 span.blue { color: #7eb8f7; }
+
+  header p.subtitle {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* ─── BOOK STAGE ─── */
+  .stage {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 900px;
+    padding: 20px 16px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Page counter */
+  .page-info {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* ─── BOOK VIEWER ─── */
+  .book-wrap {
+    width: 100%;
+    max-width: 620px;
+    position: relative;
+  }
+
+  /* Book shadow/depth effect */
+  .book-shadow {
+    position: absolute;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    height: 30px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.55) 0%, transparent 70%);
+    filter: blur(8px);
+    z-index: 0;
+  }
+
+  .book-container {
+    position: relative;
+    width: 100%;
+    border-radius: 4px 16px 16px 4px;
+    overflow: hidden;
+    box-shadow:
+      -8px 0 20px rgba(0,0,0,0.5),
+      4px 4px 30px rgba(0,0,0,0.4),
+      inset -3px 0 10px rgba(0,0,0,0.2);
+    background: #111;
+    z-index: 1;
+    /* Spine effect */
+    border-left: 14px solid #0a1628;
+  }
+
+  /* Inner spine detail */
+  .book-container::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: linear-gradient(90deg, #040a15, #1a3560, #040a15);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  /* Page turn crease */
+  .book-container::after {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.3), transparent);
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .pages-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+    will-change: transform;
+  }
+
+  .page-slide {
+    min-width: 100%;
+    position: relative;
+    background: #1a1a1a;
+  }
+
+  .page-slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Cover special treatment */
+  .page-slide.is-cover img {
+    border-right: none;
+  }
+
+  /* ─── NAVIGATION ─── */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 28px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .btn-nav {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    backdrop-filter: blur(4px);
+    flex-shrink: 0;
+  }
+
+  .btn-nav:hover:not(:disabled) {
+    background: rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.4);
+    transform: scale(1.08);
+  }
+
+  .btn-nav:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+  }
+
+  /* Thumbnails strip */
+  .thumb-strip {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    max-width: 400px;
+    padding: 4px 6px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+  }
+
+  .thumb-strip::-webkit-scrollbar { height: 3px; }
+  .thumb-strip::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+  .thumb {
+    width: 36px;
+    height: 48px;
+    border-radius: 3px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    flex-shrink: 0;
+    transition: border-color 0.2s, transform 0.2s, opacity 0.2s;
+    opacity: 0.5;
+  }
+
+  .thumb:hover { opacity: 0.8; transform: translateY(-2px); }
+  .thumb.active { border-color: var(--gold); opacity: 1; transform: translateY(-2px); }
+
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+
+  /* ─── PROGRESS BAR ─── */
+  .progress-bar {
+    width: 100%;
+    max-width: 620px;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    margin-top: 20px;
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), var(--gold));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* ─── KEYBOARD HINT ─── */
+  .hint {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.28);
+    margin-top: 10px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 10;
+    text-align: center;
+  }
+
+  kbd {
+    font-family: monospace;
+    font-size: 0.65rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 1px 5px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  /* ─── LOADING ─── */
+  .loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: #0f1b35;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    transition: opacity 0.4s;
+  }
+
+  .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Page flip animation */
+  @keyframes flipIn {
+    from { opacity: 0; transform: scaleX(0.92); }
+    to   { opacity: 1; transform: scaleX(1); }
+  }
+
+  .page-slide.flipping { animation: flipIn 0.3s ease forwards; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.22);
+    padding: 16px;
+    position: relative;
+    z-index: 10;
+  }
+
+  footer strong { color: rgba(255,255,255,0.4); }
+
+  /* ─── SWIPE SUPPORT ─── */
+  .book-wrap { touch-action: pan-y; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 480px) {
+    header h1 { font-size: 1.2rem; }
+    .btn-nav { width: 44px; height: 44px; font-size: 1.1rem; }
+    .thumb { width: 28px; height: 38px; }
+    .thumb-strip { max-width: 260px; }
+    .book-container { border-left-width: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="blue">Os Dois Iguais</span> e o <span class="red">Segredo do Coração</span></h1>
+  <p class="subtitle">por Margareth Almeida · ilustrado por Tony Matos</p>
+</header>
+
+<div class="stage">
+  <div class="page-info" id="pageInfo">Capa</div>
+
+  <div class="book-wrap" id="bookWrap">
+    <div class="book-shadow"></div>
+    <div class="book-container" id="bookContainer">
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+      </div>
+      <div class="pages-track" id="pagesTrack">
+        <!-- Pages injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn-nav" id="btnPrev" title="Página anterior" disabled>&#8592;</button>
+    <div class="thumb-strip" id="thumbStrip"></div>
+    <button class="btn-nav" id="btnNext" title="Próxima página">&#8594;</button>
+  </div>
+
+  <p class="hint">Use <kbd>←</kbd> <kbd>→</kbd> para navegar · clique nas miniaturas · arraste para virar</p>
+</div>
+
+<footer>
+  <strong>Os Dois Iguais e o Segredo do Coração</strong> · Margareth Almeida · Tony Matos
+</footer>
+
+<script>
+const PAGES = [
+  { src: 'images/capa.png',     label: 'Capa' },
+  { src: 'images/page_02.jpg',  label: 'Pág. 2' },
+  { src: 'images/page_03.jpg',  label: 'Pág. 3' },
+  { src: 'images/page_04.jpg',  label: 'Pág. 4' },
+  { src: 'images/page_05.jpg',  label: 'Pág. 5' },
+  { src: 'images/page_06.jpg',  label: 'Pág. 6' },
+  { src: 'images/page_07.jpg',  label: 'Pág. 7' },
+  { src: 'images/page_08.jpg',  label: 'Pág. 8' },
+  { src: 'images/page_09.jpg',  label: 'Pág. 9' },
+  { src: 'images/page_10.jpg',  label: 'Pág. 10' },
+  { src: 'images/page_11.jpg',  label: 'Pág. 11' },
+  { src: 'images/page_12.jpg',  label: 'Pág. 12' },
+  { src: 'images/page_13.jpg',  label: 'Pág. 13' },
+  { src: 'images/page_14.jpg',  label: 'Pág. 14' },
+  { src: 'images/page_15.jpg',  label: 'Pág. 15' },
+  { src: 'images/page_16.jpg',  label: 'Pág. 16' },
+  { src: 'images/page_17.jpg',  label: 'Pág. 17' },
+  { src: 'images/page_18.jpg',  label: 'Pág. 18' },
+  { src: 'images/page_19.jpg',  label: 'Pág. 19' },
+  { src: 'images/page_20.jpg',  label: 'Pág. 20' },
+  { src: 'images/page_21.jpg',  label: 'Pág. 21' },
+  { src: 'images/page_22.jpg',  label: 'Pág. 22' },
+  { src: 'images/page_23.jpg',  label: 'Pág. 23' },
+  { src: 'images/page_24.jpg',  label: 'Pág. 24' },
+  { src: 'images/page_25.jpg',  label: 'Pág. 25' },
+  { src: 'images/page_26.jpg',  label: 'Pág. 26' },
+  { src: 'images/page_27.jpg',  label: 'Pág. 27' },
+  { src: 'images/page_28.jpg',  label: 'Pág. 28' },
+  { src: 'images/page_29.jpg',  label: 'Pág. 29' },
+  { src: 'images/page_30.jpg',  label: 'Pág. 30' },
+  { src: 'images/page_31.jpg',  label: 'Pág. 31' },
+  { src: 'images/page_32.jpg',  label: 'Pág. 32' },
+  { src: 'images/page_33.jpg',  label: 'Pág. 33' },
+  { src: 'images/page_34.jpg',  label: 'Pág. 34' },
+  { src: 'images/page_35.jpg',  label: 'Pág. 35' },
+  { src: 'images/page_36.jpg',  label: 'Pág. 36' },
+];
+
+let current = 0;
+const track    = document.getElementById('pagesTrack');
+const strip    = document.getElementById('thumbStrip');
+const btnPrev  = document.getElementById('btnPrev');
+const btnNext  = document.getElementById('btnNext');
+const pageInfo = document.getElementById('pageInfo');
+const progress = document.getElementById('progressFill');
+const loading  = document.getElementById('loadingOverlay');
+
+// ── Build slides ──
+PAGES.forEach((p, i) => {
+  const slide = document.createElement('div');
+  slide.className = 'page-slide' + (i === 0 ? ' is-cover' : '');
+  slide.dataset.index = i;
+  const img = document.createElement('img');
+  img.src = p.src;
+  img.alt = p.label;
+  img.draggable = false;
+  if (i === 0) img.onload = () => { loading.classList.add('hidden'); };
+  slide.appendChild(img);
+  track.appendChild(slide);
+});
+
+// ── Build thumbnails ──
+PAGES.forEach((p, i) => {
+  const t = document.createElement('div');
+  t.className = 'thumb' + (i === 0 ? ' active' : '');
+  t.title = p.label;
+  const img = document.createElement('img');
+  img.src = p.src;
+  img.alt = p.label;
+  img.loading = 'lazy';
+  t.appendChild(img);
+  t.addEventListener('click', () => goTo(i));
+  strip.appendChild(t);
+});
+
+function goTo(idx) {
+  if (idx < 0 || idx >= PAGES.length) return;
+  current = idx;
+
+  // Slide
+  track.style.transform = `translateX(-${current * 100}%)`;
+
+  // Flip animation on current slide
+  const slides = track.querySelectorAll('.page-slide');
+  slides[current].classList.remove('flipping');
+  void slides[current].offsetWidth; // reflow
+  slides[current].classList.add('flipping');
+
+  // UI update
+  pageInfo.textContent = PAGES[current].label;
+  btnPrev.disabled = current === 0;
+  btnNext.disabled = current === PAGES.length - 1;
+  progress.style.width = ((current / (PAGES.length - 1)) * 100) + '%';
+
+  // Thumbs
+  const thumbs = strip.querySelectorAll('.thumb');
+  thumbs.forEach((t, i) => t.classList.toggle('active', i === current));
+  thumbs[current].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+}
+
+btnPrev.addEventListener('click', () => goTo(current - 1));
+btnNext.addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft')  goTo(current - 1);
+  if (e.key === 'ArrowRight') goTo(current + 1);
+});
+
+// ── Touch / swipe ──
+let touchStartX = 0;
+const wrap = document.getElementById('bookWrap');
+wrap.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+wrap.addEventListener('touchend', e => {
+  const dx = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(dx) > 40) dx > 0 ? goTo(current + 1) : goTo(current - 1);
+}, { passive: true });
+
+// Initial state
+goTo(0);
+// Fallback if image doesn't fire onload
+setTimeout(() => loading.classList.add('hidden'), 3000);
+</script>
+</body>
+</html>
